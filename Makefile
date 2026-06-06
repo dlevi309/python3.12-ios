@@ -2,7 +2,7 @@
 #
 # Usage examples:
 #   make deps            # build OpenSSL and libffi
-#   make python          # build CPython and stage files (work/stage/usr)
+#   make python          # build CPython and stage files (work/stage/var/jb/usr)
 #   make package         # copy staged files into Theos layout and package
 #   make all             # deps + python + package
 #
@@ -39,4 +39,3 @@ clean:
 
 distclean:
 	rm -rf work || true
-

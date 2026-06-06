@@ -143,7 +143,7 @@ awk 'BEGIN{skip=0}
 # Build and Install
 # ------------------------------------------------------------------------------
 make -j"${JOBS}"
-make install ENSUREPIP=no DESTDIR="$STAGE"
+make install ENSUREPIP=no DESTDIR="$STAGE_ROOT"
 
 # Cleanup source tarball
 cd "$BUILD"
@@ -154,12 +154,12 @@ rm -f "Python-${PY_VER}.tgz"
 # ------------------------------------------------------------------------------
 
 # Create symlinks for version-agnostic names (python3)
-ln -sf python3.12 "$STAGE/usr/local/bin/python3" || true
+ln -sf python3.12 "$STAGE_ROOT/usr/local/bin/python3" || true
 
 # Strip debug symbols to reduce package size
 # We use the iOS toolchain strip
 echo "Stripping binaries..."
-find "$STAGE" -type f \( -name "*.dylib" -o -name "*.so" -o -path "$STAGE/usr/local/bin/*" \) | while read -r f; do
+find "$STAGE_ROOT" -type f \( -name "*.dylib" -o -name "*.so" -o -path "$STAGE_ROOT/usr/local/bin/*" \) | while read -r f; do
     if file -b "$f" | grep -q 'Mach-O'; then
         "$STRIP" -x "$f" || echo "Warning: strip failed on $f" >&2
     fi
@@ -172,4 +172,4 @@ while IFS= read -r -d '' f; do
   if file -b "$f" | grep -q 'Mach-O'; then
     ldid -S"$ENTITLEMENTS" "$f" || echo "Warning: ldid failed on $f" >&2
   fi
-done < <(find "$STAGE" -type f \( -name "*.dylib" -o -name "*.so" -o -path "$STAGE/usr/local/bin/*" \) -print0)
+done < <(find "$STAGE_ROOT" -type f \( -name "*.dylib" -o -name "*.so" -o -path "$STAGE_ROOT/usr/local/bin/*" \) -print0)
