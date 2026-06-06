@@ -15,13 +15,15 @@ source "$(dirname "$0")/common-env.sh"
 # Prepare Package Root
 # ------------------------------------------------------------------------------
 PKGROOT="$WORKDIR/pkgroot"
-mkdir -p "$PKGROOT/DEBIAN"
+ROOTLESS_DIR="$PKGROOT$ROOTLESS_PREFIX"
+rm -rf "$PKGROOT"
+mkdir -p "$PKGROOT/DEBIAN" "$ROOTLESS_DIR"
 
 # Move staged files to package root
-mv "$STAGE/usr" "$PKGROOT/usr"
+cp -a "$STAGE_ROOT/." "$ROOTLESS_DIR/"
 
 # Calculate installed size for control file
-INSTALLED_SIZE="$(du -sk "$PKGROOT/usr" | awk '{print $1}')"
+INSTALLED_SIZE="$(du -sk "$ROOTLESS_DIR" | awk '{print $1}')"
 
 # ------------------------------------------------------------------------------
 # Generate Control Files
@@ -36,27 +38,27 @@ sed -e "s#\${PY_VER}#${PY_VER}#g" \
 # Copy changelog to package for package manager integration
 CHANGELOG_FILE="$(dirname "$0")/../debian/changelog"
 if [ -f "$CHANGELOG_FILE" ]; then
-    mkdir -p "$PKGROOT/usr/share/doc/com.k1tty-xz.python3"
-    gzip -9 -n -c "$CHANGELOG_FILE" > "$PKGROOT/usr/share/doc/com.k1tty-xz.python3/changelog.gz"
+    mkdir -p "$ROOTLESS_DIR/usr/share/doc/com.k1tty-xz.python3"
+    gzip -9 -n -c "$CHANGELOG_FILE" > "$ROOTLESS_DIR/usr/share/doc/com.k1tty-xz.python3/changelog.gz"
 fi
 
 # Copy copyright file (Debian package requirement)
 COPYRIGHT_FILE="$(dirname "$0")/../debian/copyright"
 if [ -f "$COPYRIGHT_FILE" ]; then
-    mkdir -p "$PKGROOT/usr/share/doc/com.k1tty-xz.python3"
-    cp "$COPYRIGHT_FILE" "$PKGROOT/usr/share/doc/com.k1tty-xz.python3/copyright"
+    mkdir -p "$ROOTLESS_DIR/usr/share/doc/com.k1tty-xz.python3"
+    cp "$COPYRIGHT_FILE" "$ROOTLESS_DIR/usr/share/doc/com.k1tty-xz.python3/copyright"
 fi
 
 # ------------------------------------------------------------------------------
 # PATH Configuration
 # ------------------------------------------------------------------------------
-# Create a profile script to ensure /usr/local/bin is in the user's PATH.
+# Create a profile script to ensure the rootless Python path is in the user's PATH.
 # This is critical for users to be able to type 'python3' without full paths.
-mkdir -p "$PKGROOT/etc/profile.d"
-cat > "$PKGROOT/etc/profile.d/python3.sh" <<'EOF'
-export PATH="/usr/local/bin:$PATH"
+mkdir -p "$ROOTLESS_DIR/etc/profile.d"
+cat > "$ROOTLESS_DIR/etc/profile.d/python3.sh" <<'EOF'
+export PATH="/var/jb/usr/local/bin:$PATH"
 EOF
-chmod 0644 "$PKGROOT/etc/profile.d/python3.sh"
+chmod 0644 "$ROOTLESS_DIR/etc/profile.d/python3.sh"
 
 # ------------------------------------------------------------------------------
 # Build Package

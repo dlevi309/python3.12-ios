@@ -6,6 +6,8 @@
 
 A fully-featured, stable port of **Python 3.12** for jailbroken iOS devices (arm64). This project provides a Debian package (`.deb`) that installs a complete Python environment, optimized for mobile usage and development.
 
+The package is built for rootless jailbreaks and installs under `/var/jb` (for example, `python3` is installed at `/var/jb/usr/local/bin/python3`).
+
 ## Features
 
 -   **Python 3.12**: Full standard library with SSL/TLS support (OpenSSL 1.1.1).
@@ -27,7 +29,7 @@ Then search for **Python 3.12 (k1tty)** and install.
 After installation, you may need to reload your shell profile or start a new terminal session for the PATH to update:
 
 ```bash
-source /etc/profile
+source /var/jb/etc/profile
 ```
 
 To install pip:
@@ -74,7 +76,7 @@ To build this package yourself, you can use the provided GitHub Actions workflow
     make all
     ```
 
-    The resulting `.deb` file will be in the `work/` directory.
+    The resulting `.deb` file will be in the `work/` directory. The package payload is rooted at `/var/jb`.
 
 ## Project Structure
 

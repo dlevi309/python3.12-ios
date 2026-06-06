@@ -23,13 +23,16 @@ MIN_IOS="${MIN_IOS:-14.5}"
 # DEPS:    Dependency build directory
 # BUILD:   Main build directory
 # STAGE:   Final staging directory for packaging
+# ROOTLESS_PREFIX: Rootless jailbreak prefix inside package payload
 WORKDIR="${WORKDIR:-$PWD/work}"
 DEPS="$WORKDIR/deps"
 BUILD="$WORKDIR/build"
 STAGE="$WORKDIR/stage"
+ROOTLESS_PREFIX="${ROOTLESS_PREFIX:-/var/jb}"
+STAGE_ROOT="$STAGE$ROOTLESS_PREFIX"
 
 # Create directories if they don't exist
-mkdir -p "$DEPS" "$BUILD" "$STAGE"
+mkdir -p "$DEPS" "$BUILD" "$STAGE" "$STAGE_ROOT"
 
 # ------------------------------------------------------------------------------
 # iOS Toolchain Configuration
@@ -55,4 +58,4 @@ export LDFLAGS="-arch arm64 -isysroot ${IOS_SDK} -miphoneos-version-min=${MIN_IO
 # Exports
 # ------------------------------------------------------------------------------
 # Export variables for use in child scripts.
-export JOBS WORKDIR DEPS BUILD STAGE IOS_SDK HOST_TRIPLE
+export JOBS WORKDIR DEPS BUILD STAGE ROOTLESS_PREFIX STAGE_ROOT IOS_SDK HOST_TRIPLE
