@@ -1,6 +1,16 @@
 name: Build Python 3.12 for iOS (arm64) and package .deb
 
 on:
+  push:
+    branches:
+      - '*'
+    paths-ignore:
+      - ".gitignore"
+  pull_request:
+    branches:
+      - '*'
+    paths-ignore:
+      - ".gitignore"
   workflow_dispatch:
 
 jobs:
