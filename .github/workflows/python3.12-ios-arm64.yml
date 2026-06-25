@@ -15,7 +15,7 @@ on:
 
 jobs:
   build:
-    runs-on: macos-13
+    runs-on: macos-14
     timeout-minutes: 30
     concurrency:
       group: ios-python3.12-arm64-${{ github.ref }}
